@@ -1,4 +1,5 @@
 import re
+from zxcvbn import zxcvbn, feedback
 
 
 def check_pw_strength(password):
@@ -27,6 +28,11 @@ def check_pw_strength(password):
     return score
 
 
+def zxcvbn_feedback(password):
+    results = zxcvbn(password)
+    return results['feedback']
+
+
 def prompt_password():
     while True:
         password = input("Enter a password: ")
@@ -34,11 +40,16 @@ def prompt_password():
 
         if score == 5:
             print("Password is strong")
+            feedback = zxcvbn_feedback(password)
+            print("Feedback: ", feedback.get('suggestions'))
             break
         elif score >= 2:
             print("Password is OK")
+            feedback = zxcvbn_feedback(password)
+            print("Feedback: ", feedback.get('suggestions'), feedback.get('warning'))
+            break
         elif score < 2:
-            print("Password is weak")
+            print("Password is weak. Please enter a stronger password.")
         if score == 0:
             print("Password is too weak. Please enter a stronger password.")
 
