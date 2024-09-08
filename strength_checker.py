@@ -1,12 +1,13 @@
 import re
 
-def check_pw_strength(password):
 
+def check_pw_strength(password):
     length_criteria = len(password) >= 8
     upper_criteria = re.search(r'[A-Z]', password) is not None
     lower_criteria = re.search(r'[a-z]', password) is not None
     digit_criteria = re.search(r'[0-9]', password) is not None
     special_criteria = re.search(r'[\W]', password) is not None
+    common_patterns = ["12345678", "87654321"]
 
     score = 0
 
@@ -18,11 +19,28 @@ def check_pw_strength(password):
         score += 1
     if digit_criteria:
         score += 1
+    if special_criteria:
+        score += 1
+    if password in common_patterns:
+        score = 0  # If password matches a common pattern, score becomes 0.
+
+    return score
 
 
-    if score == 5:
-        print("Password is strong")
-    if score < 5:
-        print("Password is OK")
-    if score < 2:
-        print("Password is weak")
+def prompt_password():
+    while True:
+        password = input("Enter a password: ")
+        score = check_pw_strength(password)
+
+        if score == 5:
+            print("Password is strong")
+            break
+        elif score >= 2:
+            print("Password is OK")
+        elif score < 2:
+            print("Password is weak")
+        if score == 0:
+            print("Password is too weak. Please enter a stronger password.")
+
+
+prompt_password()
